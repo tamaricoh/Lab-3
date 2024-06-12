@@ -8,11 +8,23 @@
 #define SEEK_SET 0
 #define SHIRA_OFFSET 0x291
 
-extern int system_call();
+extern int system_call(int syscall, int arg1, int arg2, int arg3);
 
-int main (int argc , char* argv[], char* envp[])
-{
-  /*Complete the task here*/
+int main(int argc, char* argv[], char* envp[]) {
+    int i;
+    for (i = 0; i < argc; i++) {
+        char* arg = argv[i];
+        int len = 0;
 
-  return 0;
+        /* Calculate the length of the argument string */
+        while (arg[len] != '\0') {
+            len++;
+        }
+
+        /* Print the argument string to stdout */
+        system_call(SYS_WRITE, STDOUT, (int)arg, len);
+        system_call(SYS_WRITE, STDOUT, (int)"\n", 1);
+    }
+
+    return 0;
 }
