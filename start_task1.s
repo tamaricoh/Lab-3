@@ -82,11 +82,13 @@ main:
 check_args:
     push    ecx 
     mov     ecx, [esi+4*edi]
-    
+
+    ; task 1c
     call checkInFlag
     call checkOutFlag
+    ; task 1c
 
-    ; task 0
+    ; task 1a
     push    ecx
     call strlen
     mov     edx, eax
@@ -100,15 +102,16 @@ check_args:
     push    dword 1
     push    dword 4
     call system_call
-    add     esp, 4*4
-    ; task 0
+    add     esp, 4*4    ; preperation for task 1b
 
     pop     ecx 
     inc     edi
     cmp     edi,ecx
     jne check_args
     ret
+    ; task 1a
 
+; task 1b
 encode:
     mov     bl, byte[esi]    
     cmp     bl, 0x00        
@@ -169,6 +172,9 @@ incZChar:
     inc esi               ; Move to the next byte
     jmp encode            ; Return to the encode function
 
+; task 1b
+
+; task 1c
 checkOutFlag:
     cmp word [ecx], '-'+(256*'o')
     je changeOutput
@@ -200,3 +206,4 @@ changeInput:
     mov [infile], eax
     pop ecx
     ret
+; task 1c
