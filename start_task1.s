@@ -83,9 +83,10 @@ check_args:
     push    ecx 
     mov     ecx, [esi+4*edi]
     
-;     call checkInFlag
-;     call checkOutFlag
+    call checkInFlag
+    call checkOutFlag
 
+    ; task 0
     push    ecx
     call strlen
     mov     edx, eax
@@ -100,44 +101,13 @@ check_args:
     push    dword 4
     call system_call
     add     esp, 4*4
+    ; task 0
 
     pop     ecx 
     inc     edi
     cmp     edi,ecx
     jne check_args
     ret
-
-; checkInFlag:
-;     cmp word [ecx], '-'+(256*'i')
-;     je changeInput
-;     ret
-
-; changeInput:
-;     push ecx
-;     add ecx, 2
-;     mov eax, 5
-;     mov ebx, ecx
-;     mov ecx, 0
-;     int 0x80
-;     mov [infile], eax
-;     pop ecx
-;     ret
-
-; checkOutFlag:
-;     cmp word [ecx], '-'+(256*'o')
-;     je changeOutput
-;     ret
-
-; changeOutput:
-;     push ecx
-;     add ecx, 2
-;     mov eax, 8
-;     mov ebx, ecx
-;     mov ecx, 0777
-;     int 0x80
-;     mov [outfile], eax
-;     pop ecx
-;     ret
 
 encode:
     mov     bl, byte[esi]    
@@ -199,103 +169,34 @@ incZChar:
     inc esi               ; Move to the next byte
     jmp encode            ; Return to the encode function
 
+checkOutFlag:
+    cmp word [ecx], '-'+(256*'o')
+    je changeOutput
+    ret
 
+changeOutput:
+    push ecx
+    add ecx, 2
+    mov eax, 8
+    mov ebx, ecx
+    mov ecx, 0777
+    int 0x80
+    mov [outfile], eax
+    pop ecx
+    ret
 
-; nonAlph:
-;     inc esi
-;     jmp encode
+checkInFlag:
+    cmp word [ecx], '-'+(256*'i')
+    je changeInput
+    ret
 
-; increment:
-;     inc bl
-;     mov byte[esi], bl 
-;     inc esi
-;     jmp encode
-
-; checkSmallLetter:
-;     cmp bl, 'z'
-;     jg nonAlph
-;     call increment    
-
-; checkCapital:
-;     cmp bl, 'A'
-;     jl nonAlph
-;     cmp bl, 'Z'
-;     jg checkSmallLetter
-;     call increment
-
-
-
-
-
-; _start:
-;     ; Print "Hello world!"
-;     mov edx, helloLen   ; message length
-;     mov ecx, hello      ; message to write
-;     mov ebx, 1          ; file descriptor (stdout)
-;     mov eax, 4          ; system call number (sys_write)
-;     int 0x80            ; call kernel
-
-;     ; Print "Command-line arguments:" message
-;     mov edx, msg_len    ; message length
-;     mov ecx, msg        ; message to write
-;     mov ebx, 1          ; file descriptor (stdout)
-;     mov eax, 4          ; system call number (sys_write)
-;     int 0x80            ; call kernel
-
-;     ; Prepare arguments for main function call
-;     pop ecx             ; argc
-;     mov esi, esp        ; save initial address of argv
-
-;     ; Check if there are any arguments
-;     cmp ecx, 1
-;     jle .no_arguments
-
-;     ; Print each argument
-;     mov edx, ecx        ; number of arguments
-;     mov ebx, esi        ; argv
-;     add ebx, 4          ; move to argv[1] (skip program name)
-;     mov eax, 4          ; syscall number for sys_write
-
-; .print_arguments_loop:
-;     ; Load address of argument string
-;     mov edi, [ebx]      ; argv[i]
-
-;     ; Print the argument string
-;     mov ebx, 1          ; file descriptor for stdout
-;     mov ecx, edi        ; pointer to the argument string
-;     int 0x80            ; call kernel
-
-;     ; Print newline
-;     mov edx, 1          ; message length (1 byte for newline)
-;     mov ecx, newline    ; message to write
-;     int 0x80            ; call kernel
-
-;     ; Move to the next argument
-;     add ebx, 4          ; move to the next argument
-;     dec edx             ; decrement argument counter
-;     jnz .print_arguments_loop ; loop until all arguments are printed
-
-; .no_arguments:
-;     ; Exit the program
-;     xor ebx, ebx        ; exit status
-;     mov eax, 1          ; system call for sys_exit
-;     int 0x80            ; call kernel
-
-; system_call:
-;     push    ebp             ; Save caller state
-;     mov     ebp, esp
-;     sub     esp, 4          ; Leave space for local var on stack
-;     pushad                  ; Save some more caller state
-
-;     mov     eax, [ebp+8]    ; Copy function args to registers: leftmost...        
-;     mov     ebx, [ebp+12]   ; Next argument...
-;     mov     ecx, [ebp+16]   ; Next argument...
-;     mov     edx, [ebp+20]   ; Next argument...
-;     int     0x80            ; Transfer control to operating system
-;     mov     [ebp-4], eax    ; Save returned value...
-;     popad                   ; Restore caller state (registers)
-;     mov     eax, [ebp-4]    ; place returned value where caller can see it
-;     add     esp, 4          ; Restore caller state
-;     pop     ebp             ; Restore caller state
-;     ret                     ; Back to caller
-
+changeInput:
+    push ecx
+    add ecx, 2
+    mov eax, 5
+    mov ebx, ecx
+    mov ecx, 0
+    int 0x80
+    mov [infile], eax
+    pop ecx
+    ret
