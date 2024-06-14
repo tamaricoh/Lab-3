@@ -75,7 +75,7 @@ main:
 
     mov     esi, ecx
 
-    ; call encode
+    call encode
 
     ret
 
@@ -139,29 +139,67 @@ check_args:
 ;     pop ecx
 ;     ret
 
-; encode:
-;     mov bl, byte[esi]    
-;     cmp bl, 0x00        
-;     jne checkCapital
+encode:
+    mov     bl, byte[esi]    
+    cmp     bl, 0x00        
+    jne checkChar
 
-;     push ecx
-;     call strlen
-;     mov edx, eax
-;     pop eax
+    push    ecx
+    call strlen
+    mov     edx, eax
+    pop     eax
 
-;     mov eax, 4
-;     mov ebx, [outfile]
-;     int 0x80
+    mov     eax, 4
+    mov     ebx, [outfile]
+    int     0x80
 
-;     mov eax, 6
-;     mov ebx, [infile]   
-;     int 0x80
+    mov     eax, 6
+    mov     ebx, [infile]   
+    int     0x80
 
-;     mov eax, 6
-;     mov ebx, [outfile]  
-;     int 0x80
+    mov     eax, 6
+    mov     ebx, [outfile]  
+    int     0x80
 
-;     ret
+    ret
+
+noNeedEnc:
+    inc esi
+    jmp encode
+
+incChar:
+    inc bl
+    mov byte[esi], bl 
+    inc esi
+    jmp encode 
+
+checkChar:
+    cmp bl, 'A'           ; Compare the character with 'A'
+    jl noNeedEnc          ; If less than 'A', jump to noNeedEnc
+    cmp bl, 'Y'           ; Compare the character with 'Y'
+    jle incChar           ; If between 'A' and 'Y' (inclusive), call incChar
+    cmp bl, 'Z'           ; Compare the character with 'Z'
+    je incZChar           ; If equal to 'Z', call incChar
+    cmp bl, 'a'           ; Compare the character with 'a'
+    jl noNeedEnc          ; If less than 'a', jump to noNeedEnc
+    cmp bl, 'y'           ; Compare the character with 'y'
+    jle incChar           ; If between 'a' and 'y' (inclusive), call incChar
+    cmp bl, 'z'           ; Compare the character with 'z'
+    je inczChar           ; If equal to 'z', call incChar
+
+inczChar:
+    mov bl, 'a'           ; Change 'z' to 'a'
+    mov byte [esi], bl    ; Store the new character back in the string
+    inc esi               ; Move to the next byte
+    jmp encode            ; Return to the encode function
+
+incZChar:
+    mov bl, 'A'           ; Change 'Z' to 'A'
+    mov byte [esi], bl    ; Store the new character back in the string
+    inc esi               ; Move to the next byte
+    jmp encode            ; Return to the encode function
+
+
 
 ; nonAlph:
 ;     inc esi
