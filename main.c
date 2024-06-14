@@ -22,16 +22,14 @@ int main(int argc, char* argv[], char* envp[]) {
     /* Print the file name provided in the command-line argument */
     system_call(4, 1, (int)"File name: ", 11);
     system_call(4, 1, (int)argv[1], strlen(argv[1]));
-
-    /* Call the assembly stub functions infection() and infector(filename) */
-    system_call(4, 1, (int)"\nCalling assembly stub functions...", 34);
-    system_call(4, 1, (int)"\nInfecting...", 13);
-    system_call(4, 1, (int)"\nInfector...", 12);
     system_call(4, 1, (int)"\n", 1);
     
     /* Call the assembly functions (stubs) */
     infection();
     infector(argv[1]);
+
+    system_call(4, 1, (int)"File name: ", 11);
+    
 
     /* 0a */
     /*
