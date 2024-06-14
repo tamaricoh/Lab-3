@@ -2,7 +2,7 @@ NASM_flags = -f elf32
 CC_flags = -m32 -Wall -ansi -c -nostdlib -fno-stack-protector
 LD_flags = -m elf_i386
 
-task = task0
+task = task
 O_files = start.o main.o util.o
 
 # Default target

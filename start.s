@@ -2,6 +2,9 @@ section .text
 global _start
 global system_call
 extern main
+global infection
+global infector
+
 _start:
     pop    dword ecx    ; ecx = argc
     mov    esi,esp      ; esi = argv
@@ -38,3 +41,10 @@ system_call:
     add     esp, 4          ; Restore caller state
     pop     ebp             ; Restore caller state
     ret                     ; Back to caller
+
+infection:
+    ret
+
+infector:
+    ret
+
